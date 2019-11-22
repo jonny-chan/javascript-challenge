@@ -30,6 +30,29 @@ function buildtable(data) {
         });
     });
 }
+var filters = {};
+
+function updatefilters() {
+    var changedelement = d3.select(this).select("input")
+    var inputvalue = changedelement.property("value")
+    var filterid = changedelement.attr("id")
+    if(inputvalue) {
+        filters[filterid] = inputvalue;
+    }
+    else {
+        delete filters[filterid]
+    }
+    filtertable();
+}
+function filtertable() {
+
+    var filterdata = tableData
+    Object.entries(filters).forEach(([key,value]) =>  {
+        filterdata = filterdata.filter(row => row[key] === value);
+    });
+    buildtable(filterdata)
+}
+
 function handleclick() {
     var date = d3.select("#datetime").property("value")
     var filterdata = tableData
@@ -39,7 +62,7 @@ function handleclick() {
     }
     buildtable(filterdata)
 }
-
+d3.selectAll(".filter").on("change",updatefilters)
 d3.selectAll("#filter-btn").on("click",handleclick)
 
 buildtable(tableData)
